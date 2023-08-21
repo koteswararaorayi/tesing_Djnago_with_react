@@ -86,10 +86,10 @@ WSGI_APPLICATION = 'back_end.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "student",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "127.0.0.1",
+        "NAME": "immigration",
+        "USER": "admin",
+        "PASSWORD": "$995949KKk",
+        "HOST": "mydatabase.cbperzhgkv6g.us-east-1.rds.amazonaws.com",
         "PORT": "3306",
     }
 }
@@ -135,3 +135,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
