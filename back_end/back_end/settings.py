@@ -145,3 +145,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ]
 }
+
+AUTH_USER_MODEL = "testing.CustomUser"
