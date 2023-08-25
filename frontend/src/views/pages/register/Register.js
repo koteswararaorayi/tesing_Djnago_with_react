@@ -51,7 +51,7 @@ const Register = () => {
     event.preventDefault()
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/register', formData)
+      const response = await axios.post('http://127.0.0.1:8000/register/', formData)
       console.log(response)
 
       if (response.status === 201) {
