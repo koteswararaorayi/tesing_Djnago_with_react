@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'rest_framework',
     'testing',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -90,7 +91,7 @@ DATABASES = {
         "NAME": "immigration",
         "USER": "admin",
         "PASSWORD": "$995949KKk",
-        "HOST": "mydatabase.cbperzhgkv6g.us-east-1.rds.amazonaws.com",
+        "HOST": "immigration-rds.ckf96v6ng9h8.ap-south-1.rds.amazonaws.com",        
         "PORT": "3306",
     }
 }
@@ -143,6 +144,9 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
+    ],    
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
