@@ -34,18 +34,22 @@ class RegisterUser(APIView):
 class PersonalDetails(APIView):
     def post(self,request):
         print(request.data)
-        FamilyName = request.data["family_name"]
-        Name = request.data["name"]
+        FamilyName = request.data["familyName"]
+        Name = request.data["givenName"]
         Dob = request.data["dob"]
-        EmailId = request.data["email_id"]
-        AlterEmailId = request.data["alter_email_id"]
-        PhoneNumber = request.data["phone_number"]
+        EmailId = request.data["email"]
+        AlterEmailId = request.data["alternateEmail"]
+        PhoneNumber = request.data["phoneNumber"]
+        maritalStatus = request.data["maritalStatus"]
+        permanentAddress = request.data["permanentAddress"]
+        presentAddress = request.data["presentAddress"]
 
-        data=(FamilyName,Name,Dob,EmailId,AlterEmailId,PhoneNumber)
+
+        data=(FamilyName,Name,Dob,EmailId,AlterEmailId,PhoneNumber,maritalStatus,permanentAddress,presentAddress)
 
         try:
-            query = """ insert into PersonalDetails (FamilyName, Name, Dob,EmailId,AlterEmailId,PhoneNumber) 
-            values(%s, %s, %s,%s,%s,%s)"""
+            query = """ insert into PersonalDetails (FamilyName, Name, Dob,EmailId,AlterEmailId,PhoneNumber,MaritalStatus,PermanentAddress,PresentAddress) 
+            values(%s, %s, %s,%s,%s,%s,%s,%s,%s)"""
             
             with connection.cursor() as cursor:
                 cursor.execute(query,data)
