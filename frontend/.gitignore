@@ -26,3 +26,13 @@ yarn-error.log*
 
 
 .pyc
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore migration files
+/migrations/*.pyc
+/migrations/*.pyo
+/migrations/__pycache__/
