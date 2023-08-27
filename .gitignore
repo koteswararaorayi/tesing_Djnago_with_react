@@ -8,3 +8,7 @@ __pycache__/
 /migrations/*.pyc
 /migrations/*.pyo
 /migrations/__pycache__/
+
+# Ignore modified Python cache files
+# back_end/back_end/__pycache__/
+# back_end/testing/__pycache__/
