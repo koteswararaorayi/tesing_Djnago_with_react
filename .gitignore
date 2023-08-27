@@ -10,5 +10,5 @@ __pycache__/
 /migrations/__pycache__/
 
 # Ignore modified Python cache files
-back_end/back_end/__pycache__/
-back_end/testing/__pycache__/
+# back_end/back_end/__pycache__/
+# back_end/testing/__pycache__/
