@@ -63,20 +63,3 @@ class PersonalDetails(APIView):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-def user_logout(request):
-    logout(request)
-    return JsonResponse({'message': "user successfully logout "}, status=status.HTTP_200_OK)  # Redirect to your login page after logout
-
-
