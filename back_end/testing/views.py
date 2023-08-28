@@ -35,7 +35,6 @@ class RegisterUser(APIView):
 
 class PersonalDetails(APIView):
     def post(self,request):
-        print(request.data)
         FamilyName = request.data["familyName"]
         Name = request.data["givenName"]
         Dob = request.data["dob"]
