@@ -1,0 +1,25 @@
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore migration files
+/migrations/*.pyc
+/migrations/*.pyo
+/migrations/__pycache__/
+
+
+# Python cache files
+**/__pycache__/
+
+# JWT and REST framework simplejwt cache files
+Lib/site-packages/jwt/__pycache__/
+Lib/site-packages/rest_framework_simplejwt/__pycache__/
+
+# Backend cache files
+back_end/back_end/__pycache__/
+back_end/testing/__pycache__/
+
+__pycache__/
+.DS_Store
