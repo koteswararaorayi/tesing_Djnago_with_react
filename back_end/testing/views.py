@@ -7,9 +7,11 @@ from django.http import JsonResponse
 from django.http import HttpResponseServerError
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 class RegisterUser(APIView):
+    permission_classes = [AllowAny]
     def post (self, request):
         print(request.data)
         name = request.data['name']
