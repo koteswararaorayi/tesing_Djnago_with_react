@@ -7,6 +7,8 @@ import WorkExperience from 'src/components/allForms/WorkExperience'
 import EmergencyContact from 'src/components/allForms/EmergencyContact'
 import ParentsDetails from 'src/components/allForms/ParentsDetails'
 import SiblingDetails from 'src/components/allForms/SiblingDetails'
+import ProgramsInterested from 'src/components/allForms/ProgramsInterested'
+import CanadaBiometricsInfo from 'src/components/allForms/CanadaImmigrationInfo'
 
 const tabContainerStyle = {
   display: 'flex',
@@ -37,7 +39,7 @@ const tabLabels = {
   six: 'Parents Details',
   seven: 'siblings Details',
   eight: 'Programs Interested',
-  nine: 'Visa Refugers',
+  nine: 'Visa Refusals',
   ten: 'Canada Immigration Info',
   eleven: 'International Travel History',
   // Add more labels as needed
@@ -106,7 +108,7 @@ function TabContent({ activeTab }) {
     case 'eight':
       return (
         <div>
-          <EducationDetails />
+          <ProgramsInterested />
         </div>
       )
     case 'nine':
@@ -118,7 +120,7 @@ function TabContent({ activeTab }) {
     case 'ten':
       return (
         <div>
-          <EducationDetails />
+          <CanadaBiometricsInfo />
         </div>
       )
     case 'eleven':
