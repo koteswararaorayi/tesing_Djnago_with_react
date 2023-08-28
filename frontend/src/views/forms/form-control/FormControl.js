@@ -7,8 +7,11 @@ import WorkExperience from 'src/components/allForms/WorkExperience'
 import EmergencyContact from 'src/components/allForms/EmergencyContact'
 import ParentsDetails from 'src/components/allForms/ParentsDetails'
 import SiblingDetails from 'src/components/allForms/SiblingDetails'
+import VisaRefusals from 'src/components/allForms/VisaRefusals'
+import TravelForm from 'src/components/allForms/InternationTravelHistory'
 import ProgramsInterested from 'src/components/allForms/ProgramsInterested'
 import CanadaBiometricsInfo from 'src/components/allForms/CanadaImmigrationInfo'
+
 
 const tabContainerStyle = {
   display: 'flex',
@@ -114,7 +117,7 @@ function TabContent({ activeTab }) {
     case 'nine':
       return (
         <div>
-          <EducationDetails />
+          <VisaRefusals />
         </div>
       )
     case 'ten':
@@ -126,7 +129,7 @@ function TabContent({ activeTab }) {
     case 'eleven':
       return (
         <div>
-          <EducationDetails />
+          <TravelForm />
         </div>
       )
     // Add more cases here
