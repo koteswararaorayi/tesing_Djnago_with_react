@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 //import DatePicker from 'react-datepicker'
 //import 'react-datepicker/dist/react-datepicker.css'
 
@@ -18,18 +19,19 @@ function FormControl() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const jwtToken = Cookies.get('access_token')
+    const headers = {
+      Authorization: `Bearer ${jwtToken}`,
+      'Content-Type': 'application/json', // Adjust content type if needed
+    }
     try {
       // Convert date to the desired format
       // const formattedDate = formData.dob ? formData.dob.toISOString().substr(0, 10) : null
       // console.log(formattedDate)
 
-      const response = await axios.post(
-        'http://127.0.0.1:8000/personal_details/',
-        formData,
-
-        // ...formData,
-        // dob: formattedDate,
-      )
+      const response = await axios.post('http://127.0.0.1:8000/personal_details/', formData, {
+        headers,
+      })
 
       console.log('Response:', response.data)
       // Handle success here
