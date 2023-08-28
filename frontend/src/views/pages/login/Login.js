@@ -46,7 +46,7 @@ const Login = () => {
 
       const access_token = response.data.access
       console.log(response.data.access)
-      Cookies.set('access_token', access_token, { expires: 7 })
+      Cookies.set('access_token', access_token, { expires: 1 })
       navigate('/')
     } catch (error) {
       // Handle error
