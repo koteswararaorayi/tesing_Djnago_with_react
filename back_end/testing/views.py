@@ -35,6 +35,9 @@ class RegisterUser(APIView):
 
 class PersonalDetails(APIView):
     def post(self,request):
+        user = request.user
+        user_id = user.id
+        print(user,"user and user_id ",user_id)
         FamilyName = request.data["familyName"]
         Name = request.data["givenName"]
         Dob = request.data["dob"]
@@ -46,11 +49,11 @@ class PersonalDetails(APIView):
         presentAddress = request.data["presentAddress"]
 
 
-        data=(FamilyName,Name,Dob,EmailId,AlterEmailId,PhoneNumber,maritalStatus,permanentAddress,presentAddress)
+        data=(FamilyName,Name,Dob,EmailId,AlterEmailId,PhoneNumber,maritalStatus,permanentAddress,presentAddress,user_id)
 
         try:
-            query = """ insert into PersonalDetails (FamilyName, Name, Dob,EmailId,AlterEmailId,PhoneNumber,MaritalStatus,PermanentAddress,PresentAddress) 
-            values(%s, %s, %s,%s,%s,%s,%s,%s,%s)"""
+            query = """ insert into PersonalDetails (FamilyName, Name, Dob,EmailId,AlterEmailId,PhoneNumber,MaritalStatus,PermanentAddress,PresentAddress,created_by) 
+            values(%s, %s, %s,%s,%s,%s,%s,%s,%s,%s)"""
             
             with connection.cursor() as cursor:
                 cursor.execute(query,data)
