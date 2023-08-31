@@ -1,125 +1,127 @@
-/* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
+import { Container, Form, Row, Col, Button, Card } from 'react-bootstrap'
 
-function EducationDetails() {
-  const [educationList, setEducationList] = useState([
-    {
-      schoolCollegeName: '',
-      address: '',
-      levelOfEducation: 'Post Graduation',
-      courseName: '',
-      grade: '',
-      backlogs: false,
-      numberOfBacklogs: '',
-      durationFrom: '',
-      durationTo: '',
-    },
-    {
-      schoolCollegeName: '',
-      address: '',
-      levelOfEducation: 'Graduation',
-      courseName: '',
-      grade: '',
-      backlogs: false,
-      numberOfBacklogs: '',
-      durationFrom: '',
-      durationTo: '',
-    },
-    {
-      schoolCollegeName: '',
-      address: '',
-      levelOfEducation: 'Inter/Diploma',
-      courseName: '',
-      grade: '',
-      backlogs: false,
-      numberOfBacklogs: '',
-      durationFrom: '',
-      durationTo: '',
-    },
-    {
-      schoolCollegeName: '',
-      address: '',
-      levelOfEducation: 'SSC',
-      courseName: '',
-      grade: '',
-      backlogs: false,
-      numberOfBacklogs: '',
-      durationFrom: '',
-      durationTo: '',
-    },
-  ])
+const EducationForm = () => {
+  const [entries, setEntries] = useState([])
 
-  const handleEducationChange = (e, index) => {
-    const { name, value } = e.target
-
-    if (name === 'levelOfEducation') {
-      // Clear fields in subsequent entries
-      for (let i = index + 1; i < educationList.length; i++) {
-        educationList[i].levelOfEducation = ''
-      }
-    }
-
-    setEducationList((prevList) => {
-      const updatedList = [...prevList]
-      updatedList[index][name] = value
-      return updatedList
-    })
+  const handleBacklogsChange = (id, value) => {
+    setEntries(entries.map((entry) => (entry.id === id ? { ...entry, backlogs: value } : entry)))
   }
 
-  const handleChange = (e, index) => {
-    const { name, value } = e.target
+  const handleEducationLevelChange = (id, value) => {
+    setEntries(
+      entries.map((entry) => (entry.id === id ? { ...entry, educationLevel: value } : entry)),
+    )
+  }
 
-    setEducationList((prevList) => {
-      const updatedList = [...prevList]
-      updatedList[index][name] = value
-      return updatedList
-    })
+  const generateEntries = (count) => {
+    const newEntries = Array.from({ length: count }, (_, id) => ({
+      id,
+      backlogs: 'no',
+      educationLevel: 'post-graduation',
+    }))
+
+    setEntries(newEntries)
+  }
+
+  const getAvailableEducationLevels = (index) => {
+    const selectedLevels = entries
+      .filter((entry, i) => i < index && entry.educationLevel)
+      .map((entry) => entry.educationLevel)
+
+    return ['post-graduation', 'graduation', 'inter-diploma', 'ssc'].filter(
+      (level) => !selectedLevels.includes(level),
+    )
   }
 
   return (
-    <div className="container mt-5">
+    <Container className="mt-5">
       <h2>Education Details</h2>
-      {educationList.map((education, index) => (
-        <div key={index} className="mb-4">
-          <div className="mb-3">
-            <label>School/College Name</label>
-            <input
-              type="text"
-              name="schoolCollegeName"
-              value={education.schoolCollegeName}
-              onChange={(e) => handleChange(e, index)}
-            />
-          </div>
-          <div className="mb-3">
-            <label>Address</label>
-            <input
-              type="text"
-              name="address"
-              value={education.address}
-              onChange={(e) => handleEducationChange(e, index)}
-            />
-          </div>
-          <div className="mb-3">
-            <label>Level of Education</label>
-            <select
-              name="levelOfEducation"
-              value={education.levelOfEducation}
-              onChange={(e) => handleChange(e, index)}
-            >
-              <option value="">Select...</option>
-              <option value="Post Graduation">Post Graduation</option>
-              <option value="Graduation">Graduation</option>
-              <option value="Inter/Diploma">Inter/Diploma</option>
-              <option value="SSC">SSC</option>
-            </select>
-          </div>
-          {/* Other fields */}
-          {/* ... (other fields) */}
-          <hr />
-        </div>
-      ))}
-    </div>
+      <Form>
+        <Button variant="link" onClick={() => generateEntries(4)}>
+          Post Graduation
+        </Button>
+        <Button variant="link" onClick={() => generateEntries(3)}>
+          Graduation
+        </Button>
+        <Button variant="link" onClick={() => generateEntries(2)}>
+          Inter/Diploma
+        </Button>
+        <Button variant="link" onClick={() => generateEntries(1)}>
+          SSC
+        </Button>
+
+        {entries.map((entry, index) => (
+          <Card key={entry.id} className="mb-4 p-3">
+            <Row>
+              <Col md={6} className="mb-3">
+                <Form.Label>School/College Name</Form.Label>
+                <Form.Control type="text" required />
+              </Col>
+              <Col md={6} className="mb-3">
+                <Form.Label>Address</Form.Label>
+                <Form.Control type="text" required />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6} className="mb-3">
+                <Form.Label>Level of Education</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={entry.educationLevel || 'post-graduation'}
+                  onChange={(e) => handleEducationLevelChange(entry.id, e.target.value)}
+                  required
+                >
+                  {getAvailableEducationLevels(index).map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Col>
+              <Col md={6} className="mb-3">
+                <Form.Label>Backlogs (Including cleared backlogs)</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={entry.backlogs || 'no'}
+                  onChange={(e) => handleBacklogsChange(entry.id, e.target.value)}
+                  required
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </Form.Control>
+              </Col>
+            </Row>
+            {entry.backlogs === 'yes' && (
+              <Row>
+                <Col md={6} className="mb-3">
+                  <Form.Label>Number of Backlogs</Form.Label>
+                  <Form.Control type="number" />
+                </Col>
+                <Col md={6} className="mb-3">
+                  <Form.Label>Attempts Given</Form.Label>
+                  <Form.Control type="number" />
+                </Col>
+              </Row>
+            )}
+            <Row>
+              <Col md={6} className="mb-3">
+                <Form.Label>Start Date</Form.Label>
+                <Form.Control type="date" required />
+              </Col>
+              <Col md={6} className="mb-3">
+                <Form.Label>End Date</Form.Label>
+                <Form.Control type="date" required />
+              </Col>
+            </Row>
+          </Card>
+        ))}
+        <Button variant="primary" type="submit" className="mt-3">
+          Submit
+        </Button>
+      </Form>
+    </Container>
   )
 }
 
-export default EducationDetails
+export default EducationForm

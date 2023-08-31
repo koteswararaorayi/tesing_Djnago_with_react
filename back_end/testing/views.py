@@ -6,7 +6,6 @@ from django.db import connection
 from django.http import JsonResponse
 from django.http import HttpResponseServerError
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import logout
 from rest_framework.permissions import AllowAny
 
 # Create your views here.
@@ -37,7 +36,6 @@ class PersonalDetails(APIView):
     def post(self,request):
         user = request.user
         user_id = user.id
-        print(user,"user and user_id ",user_id)
         FamilyName = request.data["familyName"]
         Name = request.data["givenName"]
         Dob = request.data["dob"]
@@ -47,10 +45,7 @@ class PersonalDetails(APIView):
         maritalStatus = request.data["maritalStatus"]
         permanentAddress = request.data["permanentAddress"]
         presentAddress = request.data["presentAddress"]
-
-
         data=(FamilyName,Name,Dob,EmailId,AlterEmailId,PhoneNumber,maritalStatus,permanentAddress,presentAddress,user_id)
-
         try:
             query = """ insert into PersonalDetails (FamilyName, Name, Dob,EmailId,AlterEmailId,PhoneNumber,MaritalStatus,PermanentAddress,PresentAddress,created_by) 
             values(%s, %s, %s,%s,%s,%s,%s,%s,%s,%s)"""
