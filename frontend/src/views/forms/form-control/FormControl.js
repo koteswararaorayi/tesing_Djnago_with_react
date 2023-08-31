@@ -12,7 +12,6 @@ import TravelForm from 'src/components/allForms/InternationTravelHistory'
 import ProgramsInterested from 'src/components/allForms/ProgramsInterested'
 import CanadaBiometricsInfo from 'src/components/allForms/CanadaImmigrationInfo'
 
-
 const tabContainerStyle = {
   display: 'flex',
   flexWrap: 'wrap',
