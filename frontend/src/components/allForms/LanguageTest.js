@@ -29,7 +29,7 @@ function TestForm() {
         Authorization: `Bearer ${token}`,
       }
 
-      const response = await axios.post('http://your-api-endpoint.com/submit-test', formData, {
+      const response = await axios.post('http://127.0.0.1:8000/languagetest/', formData, {
         headers: headers,
       })
 

@@ -40,14 +40,14 @@ function ProgramsInterested() {
       }
 
       // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://your-api-url/submit-sibling-details', programs, {
+      const response = await axios.post('http://127.0.0.1:8000/programsinterested/', programs, {
         headers: headers,
       })
 
       console.log('Response:', response.data)
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
-      navigate('/')
+      navigate('/forms/form-control')
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.

@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+/* eslint-disable no-undef */
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 import PersonalDetails from 'src/components/allForms/PersonalDetails'
 import LanguageTest from 'src/components/allForms/LanguageTest'
 import EducationDetails from 'src/components/allForms/EducationDetails'
