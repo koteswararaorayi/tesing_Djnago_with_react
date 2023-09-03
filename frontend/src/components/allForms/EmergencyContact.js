@@ -26,12 +26,12 @@ function EmergencyContact() {
       }
 
       // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://your-api-url/submit-emergency-contact', formData, {
+      const response = await axios.post('http://127.0.0.1:8000/emergencycontact/', formData, {
         headers: headers,
       })
 
       console.log('Response:', response.data)
-      navigate('/')
+      navigate('/forms/form-control')
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
     } catch (error) {
@@ -102,7 +102,7 @@ function EmergencyContact() {
             <div className="mb-3">
               <label>Phone Number</label>
               <input
-                type="tel"
+                type="number"
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}

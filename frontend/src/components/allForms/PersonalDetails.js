@@ -4,8 +4,10 @@ import axios from 'axios'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Cookie from 'js-cookie'
+import { useNavigate } from 'react-router-dom'
 
 function PersonalDetails() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     familyName: '',
     givenName: '',
@@ -41,6 +43,12 @@ function PersonalDetails() {
 
       console.log('Response:', response.data)
       // Handle success here
+      if (response.status === 201) {
+        navigate('/forms/form-control/languagetest')
+      } else {
+        // Handle the error response here
+        console.error('Error:', response.data)
+      }
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.

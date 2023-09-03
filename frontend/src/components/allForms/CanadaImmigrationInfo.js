@@ -23,7 +23,7 @@ function CanadaBiometricsInfo() {
 
       // Perform Axios POST request to your API endpoint
       const response = await axios.post(
-        'http://your-api-url/submit-emergency-contact',
+        'http://127.0.0.1:8000/canadaimmigrationinfo/',
         {
           biometricsGiven,
           biometricsDate,
@@ -36,7 +36,7 @@ function CanadaBiometricsInfo() {
       )
 
       console.log('Response:', response.data)
-      navigate('/')
+      navigate('/forms/form-control')
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
     } catch (error) {

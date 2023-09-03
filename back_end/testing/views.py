@@ -30,35 +30,3 @@ class RegisterUser(APIView):
         except Exception as e:
             error_message = f"An unexpected error occurred: {e}"
             return HttpResponseServerError(error_message)
-
-
-class PersonalDetails(APIView):
-    def post(self,request):
-        user = request.user
-        user_id = user.id
-        FamilyName = request.data["familyName"]
-        Name = request.data["givenName"]
-        Dob = request.data["dob"]
-        EmailId = request.data["email"]
-        AlterEmailId = request.data["alternateEmail"]
-        PhoneNumber = request.data["phoneNumber"]
-        maritalStatus = request.data["maritalStatus"]
-        permanentAddress = request.data["permanentAddress"]
-        presentAddress = request.data["presentAddress"]
-        data=(FamilyName,Name,Dob,EmailId,AlterEmailId,PhoneNumber,maritalStatus,permanentAddress,presentAddress,user_id)
-        try:
-            query = """ insert into PersonalDetails (FamilyName, Name, Dob,EmailId,AlterEmailId,PhoneNumber,MaritalStatus,PermanentAddress,PresentAddress,created_by) 
-            values(%s, %s, %s,%s,%s,%s,%s,%s,%s,%s)"""
-            
-            with connection.cursor() as cursor:
-                cursor.execute(query,data)
-                cursor.close()
-            
-            return JsonResponse({'message': "PersonalDetails successfully Inserted"}, status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            error_message = f"An unexpected error occurred: {e}"
-            return HttpResponseServerError(error_message)
-
-
-

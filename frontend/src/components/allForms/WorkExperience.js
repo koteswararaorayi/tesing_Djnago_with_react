@@ -28,13 +28,13 @@ function WorkExperienceForm() {
 
       // Perform Axios POST request to your API endpoint
       const response = await axios.post(
-        'http://your-api-url/submit-work-experience',
+        'http://127.0.0.1:8000/workexperience/',
         workExperienceList,
         { headers: headers },
       )
 
       console.log('Response:', response.data)
-      navigate('/')
+      navigate('/forms/form-control')
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
     } catch (error) {
@@ -91,7 +91,7 @@ function WorkExperienceForm() {
                 />
               </div>
               <div className="col-md-6">
-                <label>Company Name & Location</label>
+                <label>Company Name</label>
                 <input
                   type="text"
                   name="companyName"
@@ -108,7 +108,7 @@ function WorkExperienceForm() {
                 <input
                   type="text"
                   name="location"
-                  value={experience.companyName}
+                  value={experience.location}
                   onChange={(e) => handleChange(e, index)}
                   className="form-control"
                 />

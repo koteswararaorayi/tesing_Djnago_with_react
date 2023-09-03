@@ -47,14 +47,14 @@ function SiblingDetails() {
       }
 
       // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://your-api-url/submit-sibling-details', siblings, {
+      const response = await axios.post('http://127.0.0.1:8000/siblingsdetails/', siblings, {
         headers: headers,
       })
 
       console.log('Response:', response.data)
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
-      navigate('/')
+      navigate('/forms/form-control')
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
@@ -142,7 +142,7 @@ function SiblingDetails() {
               <div className="col-md-6">
                 <label>Sibling Annual Income</label>
                 <input
-                  type="text"
+                  type="number"
                   name="siblingIncome"
                   value={sibling.siblingIncome}
                   onChange={(e) => handleChange(e, index)}

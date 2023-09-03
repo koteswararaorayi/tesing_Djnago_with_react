@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-
 import Cookie from 'js-cookie'
 
 const VisaRefusals = () => {
@@ -32,7 +31,7 @@ const VisaRefusals = () => {
     event.preventDefault()
 
     const jwtToken = Cookie.get('access_token')
-    const apiUrl = 'your_api_endpoint_here'
+    const apiUrl = 'http://127.0.0.1:8000/visarefusals/'
 
     try {
       const response = await axios.post(apiUrl, visaDetails, {
@@ -41,9 +40,9 @@ const VisaRefusals = () => {
           Authorization: `Bearer ${jwtToken}`,
         },
       })
-
-      if (response.data.redirectUrl) {
-        history(response.data.redirectUrl)
+      console.log('Response:', response.data)
+      if (response.status === 201) {
+        history('/forms/form-control')
       }
     } catch (error) {
       // Handle error

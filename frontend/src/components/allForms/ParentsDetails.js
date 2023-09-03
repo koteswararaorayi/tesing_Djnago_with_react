@@ -32,14 +32,14 @@ function ParentsDetails() {
       }
 
       // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://your-api-url/submit-parents-details', formData, {
+      const response = await axios.post('http://127.0.0.1:8000/parentsdetails/', formData, {
         headers: headers,
       })
 
       console.log('Response:', response.data)
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
-      navigate('/')
+      navigate('/forms/form-control')
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
@@ -102,7 +102,7 @@ function ParentsDetails() {
             <div className="mb-3">
               <label>Father Annual Income</label>
               <input
-                type="text"
+                type="number"
                 name="fatherIncome"
                 value={formData.fatherIncome}
                 onChange={handleChange}
@@ -158,7 +158,7 @@ function ParentsDetails() {
             <div className="mb-3">
               <label>Mother Annual Income</label>
               <input
-                type="text"
+                type="number"
                 name="motherIncome"
                 value={formData.motherIncome}
                 onChange={handleChange}
