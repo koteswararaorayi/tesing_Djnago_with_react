@@ -1,11 +1,9 @@
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
 import Cookie from 'js-cookie'
 
-const TravelForm = () => {
-  const navigate = useNavigate()
-
+function TravelForm({ onTabChange }) {
   const [travelDetails, setTravelDetails] = useState([
     { country: '', location: '', purpose: '', fromDate: '', toDate: '' },
   ])
@@ -40,8 +38,12 @@ const TravelForm = () => {
         { headers },
       )
       console.log(response.data)
-      // Handle success, you can use 'navigate' to redirect
-      navigate('/forms/form-control') // Replace '/success' with your desired success route
+      if (response.status === 201) {
+        onTabChange('one')
+      } else {
+        // Handle the error response here
+        console.error('Error:', response.data)
+      }
     } catch (error) {
       // Handle error here
     }
@@ -145,5 +147,7 @@ const TravelForm = () => {
     </div>
   )
 }
-
+TravelForm.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
+}
 export default TravelForm

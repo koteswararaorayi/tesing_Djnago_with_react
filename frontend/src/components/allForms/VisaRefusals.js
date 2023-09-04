@@ -1,9 +1,10 @@
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import Cookie from 'js-cookie'
 
-const VisaRefusals = () => {
+function VisaRefusals({ onTabChange }) {
   const [visaDetails, setVisaDetails] = useState([
     { country: '', reason: '', type: '', comments: '' },
   ])
@@ -25,7 +26,7 @@ const VisaRefusals = () => {
     setVisaDetails(updatedDetails)
   }
 
-  const history = useNavigate()
+  // const history = useNavigate()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -42,7 +43,7 @@ const VisaRefusals = () => {
       })
       console.log('Response:', response.data)
       if (response.status === 201) {
-        history('/forms/form-control')
+        onTabChange('ten')
       }
     } catch (error) {
       // Handle error
@@ -136,5 +137,7 @@ const VisaRefusals = () => {
     </div>
   )
 }
-
+VisaRefusals.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
+}
 export default VisaRefusals

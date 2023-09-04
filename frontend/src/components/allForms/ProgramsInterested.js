@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
-function ProgramsInterested() {
-  const navigate = useNavigate()
+function ProgramsInterested({ onTabChange }) {
+  // const navigate = useNavigate()
   const [programs, setPrograms] = useState([
     { stream: '', duration: '', location: '', comments: '' },
   ])
@@ -45,9 +46,9 @@ function ProgramsInterested() {
       })
 
       console.log('Response:', response.data)
-      // Handle success, e.g., navigate to another page
-      // history.push("/another-page");
-      navigate('/forms/form-control')
+      if (response.status === 201) {
+        onTabChange('nine')
+      }
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
@@ -140,5 +141,7 @@ function ProgramsInterested() {
     </div>
   )
 }
-
+ProgramsInterested.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
+}
 export default ProgramsInterested

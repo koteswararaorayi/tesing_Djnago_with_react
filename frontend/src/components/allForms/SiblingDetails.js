@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
-function SiblingDetails() {
-  const navigate = useNavigate()
+function SiblingDetails({ onTabChange }) {
+  // const navigate = useNavigate()
   const [siblings, setSiblings] = useState([
     {
       siblingName: '',
@@ -52,9 +53,9 @@ function SiblingDetails() {
       })
 
       console.log('Response:', response.data)
-      // Handle success, e.g., navigate to another page
-      // history.push("/another-page");
-      navigate('/forms/form-control')
+      if (response.status === 201) {
+        onTabChange('eight')
+      }
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
@@ -174,6 +175,9 @@ function SiblingDetails() {
       </form>
     </div>
   )
+}
+SiblingDetails.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
 }
 
 export default SiblingDetails

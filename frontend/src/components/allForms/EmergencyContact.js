@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
-function EmergencyContact() {
-  const navigate = useNavigate()
+function EmergencyContact({ onTabChange }) {
+  // const navigate = useNavigate()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -31,7 +32,9 @@ function EmergencyContact() {
       })
 
       console.log('Response:', response.data)
-      navigate('/forms/form-control')
+      if (response.status === 201) {
+        onTabChange('six')
+      }
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
     } catch (error) {
@@ -131,6 +134,9 @@ function EmergencyContact() {
       </form>
     </div>
   )
+}
+EmergencyContact.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
 }
 
 export default EmergencyContact

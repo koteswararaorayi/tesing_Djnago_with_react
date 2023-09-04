@@ -1,12 +1,10 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 
-function TestForm() {
-  const navigate = useNavigate()
-
+function TestForm({ onTabChange }) {
   const [formData, setFormData] = useState({
     testType: '',
     category: '',
@@ -35,7 +33,13 @@ function TestForm() {
 
       console.log('Response:', response.data)
       // Redirect to another page
-      navigate('/success')
+      // navigate('/success')
+      if (response.status === 201) {
+        onTabChange('three')
+      } else {
+        // Handle the error response here
+        console.error('Error:', response.data)
+      }
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
@@ -182,6 +186,9 @@ function TestForm() {
       </form>
     </div>
   )
+}
+TestForm.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
 }
 
 export default TestForm

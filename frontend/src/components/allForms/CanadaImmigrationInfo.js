@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
-function CanadaBiometricsInfo() {
-  const navigate = useNavigate()
+function CanadaBiometricsInfo({ onTabChange }) {
+  // const navigate = useNavigate()
   const [biometricsGiven, setBiometricsGiven] = useState(false)
   const [biometricsDate, setBiometricsDate] = useState('')
 
@@ -36,9 +37,9 @@ function CanadaBiometricsInfo() {
       )
 
       console.log('Response:', response.data)
-      navigate('/forms/form-control')
-      // Handle success, e.g., navigate to another page
-      // history.push("/another-page");
+      if (response.status === 201) {
+        onTabChange('eleven')
+      }
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
@@ -124,5 +125,7 @@ function CanadaBiometricsInfo() {
     </div>
   )
 }
-
+CanadaBiometricsInfo.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
+}
 export default CanadaBiometricsInfo
