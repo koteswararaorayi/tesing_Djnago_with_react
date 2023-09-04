@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
-function ParentsDetails() {
-  const navigate = useNavigate()
+function ParentsDetails({ onTabChange }) {
+  // const navigate = useNavigate()
   const [formData, setFormData] = useState({
     fatherName: '',
     fatherDOB: '',
@@ -37,9 +38,9 @@ function ParentsDetails() {
       })
 
       console.log('Response:', response.data)
-      // Handle success, e.g., navigate to another page
-      // history.push("/another-page");
-      navigate('/forms/form-control')
+      if (response.status === 201) {
+        onTabChange('seven')
+      }
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
@@ -202,6 +203,9 @@ function ParentsDetails() {
       </form>
     </div>
   )
+}
+ParentsDetails.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
 }
 
 export default ParentsDetails

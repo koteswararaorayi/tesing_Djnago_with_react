@@ -1,13 +1,12 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Cookie from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
 
-function PersonalDetails() {
-  const navigate = useNavigate()
+function PersonalDetails({ onTabChange }) {
   const [formData, setFormData] = useState({
     familyName: '',
     givenName: '',
@@ -44,7 +43,7 @@ function PersonalDetails() {
       console.log('Response:', response.data)
       // Handle success here
       if (response.status === 201) {
-        navigate('/forms/form-control/languagetest')
+        onTabChange('two')
       } else {
         // Handle the error response here
         console.error('Error:', response.data)
@@ -191,6 +190,10 @@ function PersonalDetails() {
       </form>
     </div>
   )
+}
+
+PersonalDetails.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
 }
 
 export default PersonalDetails

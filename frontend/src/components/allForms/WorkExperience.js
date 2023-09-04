@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
-function WorkExperienceForm() {
-  const navigate = useNavigate()
+function WorkExperienceForm({ onTabChange }) {
+  // const navigate = useNavigate()
   const [workExperienceList, setWorkExperienceList] = useState([
     {
       designation: '',
@@ -34,7 +35,10 @@ function WorkExperienceForm() {
       )
 
       console.log('Response:', response.data)
-      navigate('/forms/form-control')
+      if (response.status === 201) {
+        onTabChange('five')
+      }
+      // navigate('/forms/form-control')
       // Handle success, e.g., navigate to another page
       // history.push("/another-page");
     } catch (error) {
@@ -162,6 +166,9 @@ function WorkExperienceForm() {
       </form>
     </div>
   )
+}
+WorkExperienceForm.propTypes = {
+  onTabChange: PropTypes.func.isRequired,
 }
 
 export default WorkExperienceForm

@@ -64,72 +64,72 @@ Tab.propTypes = {
   onClick: PropTypes.func.isRequired,
 }
 
-function TabContent({ activeTab }) {
+function TabContent({ activeTab, onTabChange }) {
   switch (activeTab) {
     case 'one':
       return (
         <div>
-          <PersonalDetails />
+          <PersonalDetails onTabChange={onTabChange} />
         </div>
       )
     case 'two':
       return (
         <div>
-          <LanguageTest />
+          <LanguageTest onTabChange={onTabChange} />
         </div>
       )
     case 'three':
       return (
         <div>
-          <EducationDetails />
+          <EducationDetails onTabChange={onTabChange} />
         </div>
       )
     case 'four':
       return (
         <div>
-          <WorkExperience />
+          <WorkExperience onTabChange={onTabChange} />
         </div>
       )
     case 'five':
       return (
         <div>
-          <EmergencyContact />
+          <EmergencyContact onTabChange={onTabChange} />
         </div>
       )
     case 'six':
       return (
         <div>
-          <ParentsDetails />
+          <ParentsDetails onTabChange={onTabChange} />
         </div>
       )
     case 'seven':
       return (
         <div>
-          <SiblingDetails />
+          <SiblingDetails onTabChange={onTabChange} />
         </div>
       )
     case 'eight':
       return (
         <div>
-          <ProgramsInterested />
+          <ProgramsInterested onTabChange={onTabChange} />
         </div>
       )
     case 'nine':
       return (
         <div>
-          <VisaRefusals />
+          <VisaRefusals onTabChange={onTabChange} />
         </div>
       )
     case 'ten':
       return (
         <div>
-          <CanadaBiometricsInfo />
+          <CanadaBiometricsInfo onTabChange={onTabChange} />
         </div>
       )
     case 'eleven':
       return (
         <div>
-          <TravelForm />
+          <TravelForm onTabChange={onTabChange} />
         </div>
       )
     // Add more cases here
@@ -140,6 +140,7 @@ function TabContent({ activeTab }) {
 
 TabContent.propTypes = {
   activeTab: PropTypes.string.isRequired,
+  onTabChange: PropTypes.func.isRequired,
 }
 
 function ColorTabs() {
@@ -168,7 +169,7 @@ function ColorTabs() {
           ))}
         </div>
       ))}
-      <TabContent activeTab={activeTab} />
+      <TabContent activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   )
 }
