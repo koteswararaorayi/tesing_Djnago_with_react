@@ -1,14 +1,15 @@
 /* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 // import { useNavigate } from 'react-router-dom'
 
 function WorkExperienceForm({ onTabChange }) {
-  // const navigate = useNavigate()
+  const [dataLength, setDataLength] = useState(0)
   const [workExperienceList, setWorkExperienceList] = useState([
     {
+      id: '',
       designation: '',
       companyName: '',
       location: '',
@@ -16,34 +17,76 @@ function WorkExperienceForm({ onTabChange }) {
       endDate: '',
     },
   ])
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/workexperience/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        console.log(data)
+        if (data.length > 0) {
+          // Use map to extract the desired fields from each item.
+          const filteredData = data.map((item) => ({
+            id: item.id || '',
+            designation: item.designation || '',
+            companyName: item.company_name || '',
+            location: item.location || '',
+            startDate: item.duration_start || '',
+            endDate: item.duration_end || '',
+          }))
+
+          // Set the formData state with the filtered data.
+          setWorkExperienceList(filteredData)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const token = Cookie.get('access_token') // Get the JWT token from Cookie
 
     try {
+      const token = Cookie.get('access_token')
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       }
+      if (dataLength > 0) {
+        const response = await axios.put(
+          'http://127.0.0.1:8000/workexperience',
+          workExperienceList,
+          { headers: headers },
+        )
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('five')
+        }
+      } else {
+        const response = await axios.post(
+          'http://127.0.0.1:8000/workexperience/',
+          workExperienceList,
+          { headers: headers },
+        )
 
-      // Perform Axios POST request to your API endpoint
-      const response = await axios.post(
-        'http://127.0.0.1:8000/workexperience/',
-        workExperienceList,
-        { headers: headers },
-      )
-
-      console.log('Response:', response.data)
-      if (response.status === 201) {
-        onTabChange('five')
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('five')
+        }
       }
-      // navigate('/forms/form-control')
-      // Handle success, e.g., navigate to another page
-      // history.push("/another-page");
     } catch (error) {
       console.error('Error:', error)
-      // Handle error messages or actions here.
     }
   }
 
@@ -125,6 +168,8 @@ function WorkExperienceForm({ onTabChange }) {
                   value={experience.startDate}
                   onChange={(e) => handleChange(e, index)}
                   className="form-control"
+                  max={getCurrentDate()}
+                  onFocus={(e) => e.target.blur()}
                 />
               </div>
             </div>
@@ -137,6 +182,9 @@ function WorkExperienceForm({ onTabChange }) {
                   value={experience.endDate}
                   onChange={(e) => handleChange(e, index)}
                   className="form-control"
+                  min={experience.startDate} // Set the minimum date to the Start Date
+                  max={getCurrentDate()}
+                  onFocus={(e) => e.target.blur()}
                 />
               </div>
             </div>
@@ -169,6 +217,14 @@ function WorkExperienceForm({ onTabChange }) {
 }
 WorkExperienceForm.propTypes = {
   onTabChange: PropTypes.func.isRequired,
+}
+function getCurrentDate() {
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const day = String(currentDate.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 
 export default WorkExperienceForm

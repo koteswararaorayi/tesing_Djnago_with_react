@@ -1,13 +1,16 @@
 /* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Cookie from 'js-cookie'
 
 function PersonalDetails({ onTabChange }) {
+  const [dataLength, setDataLength] = useState(0)
+
   const [formData, setFormData] = useState({
+    id: '',
     familyName: '',
     givenName: '',
     dob: null,
@@ -18,45 +21,99 @@ function PersonalDetails({ onTabChange }) {
     permanentAddress: '',
     presentAddress: '',
   })
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/personaldetails/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        data = data[0]
+        // Set the formData state with the retrieved data
+        setFormData({
+          id: data.id || '',
+          familyName: data.FamilyName || '',
+          givenName: data.Name || '',
+          dob: data.Dob ? new Date(data.Dob) : null,
+          email: data.EmailId || '',
+          alternateEmail: data.AlterEmailId || '',
+          phoneNumber: data.PhoneNumber || '',
+          maritalStatus: data.MaritalStatus || '',
+          permanentAddress: data.PermanentAddress || '',
+          presentAddress: data.PresentAddress || '',
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       const token = Cookie.get('access_token')
-      // Convert date to the desired format
       const formattedDate = formData.dob ? formData.dob.toISOString().substr(0, 10) : null
       const headers = {
-        'Content-Type': 'application/json', // You can modify this based on your needs
-        Authorization: `Bearer ${token}`, // Add your authorization token here
-        // Add other headers if needed
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       }
-
-      const response = await axios.post(
-        'http://127.0.0.1:8000/personaldetails/',
-        {
-          ...formData,
-          dob: formattedDate,
-        },
-        { headers: headers },
-      )
-
-      console.log('Response:', response.data)
-      // Handle success here
-      if (response.status === 201) {
-        onTabChange('two')
+      if (dataLength > 0) {
+        const response = await axios.put(
+          `http://127.0.0.1:8000/personaldetails/?id=${formData.id}`,
+          {
+            ...formData,
+            dob: formattedDate,
+          },
+          { headers: headers },
+        )
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('two')
+        } else {
+          console.error('Error:', response.data)
+        }
       } else {
-        // Handle the error response here
-        console.error('Error:', response.data)
+        const response = await axios.post(
+          'http://127.0.0.1:8000/personaldetails/',
+          {
+            ...formData,
+            dob: formattedDate,
+          },
+          { headers: headers },
+        )
+
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('two')
+        } else {
+          console.error('Error:', response.data)
+        }
       }
     } catch (error) {
       console.error('Error:', error)
-      // Handle error messages or actions here.
     }
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData((prevData) => ({ ...prevData, [name]: value }))
+    if (name === 'phoneNumber') {
+      // Ensure the input value is numeric and has a maximum length of 10 characters
+      if (/^\d{0,10}$/.test(value)) {
+        setFormData((prevData) => ({ ...prevData, [name]: value }))
+      }
+    } else {
+      // For other inputs, update the value directly
+      setFormData((prevData) => ({ ...prevData, [name]: value }))
+    }
   }
 
   const handleDateChange = (date) => {
@@ -102,6 +159,7 @@ function PersonalDetails({ onTabChange }) {
                 yearDropdownItemNumber={50}
                 scrollableYearDropdown
                 showMonthDropdown
+                maxDate={new Date()}
               />
             </div>
           </div>
@@ -133,7 +191,7 @@ function PersonalDetails({ onTabChange }) {
           <div className="col-md-6">
             <label className="form-label">Phone Number</label>
             <input
-              type="tel"
+              type="number"
               className="form-control"
               name="phoneNumber"
               value={formData.phoneNumber}

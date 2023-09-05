@@ -1,12 +1,49 @@
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 
 function TravelForm({ onTabChange }) {
+  const [dataLength, setDataLength] = useState(0)
   const [travelDetails, setTravelDetails] = useState([
-    { country: '', location: '', purpose: '', fromDate: '', toDate: '' },
+    { id: '', country: '', location: '', purpose: '', fromDate: '', toDate: '' },
   ])
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/internationaltravelhistory/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        console.log(data)
+        if (data.length > 0) {
+          // Use map to extract the desired fields from each item.
+          const filteredData = data.map((item) => ({
+            id: item.id || '',
+            country: item.country || '',
+            location: item.location || '',
+            purpose: item.purpose || '',
+            fromDate: item.from_date || '',
+            toDate: item.to_date || '',
+          }))
+
+          // Set the formData state with the filtered data.
+          setTravelDetails(filteredData)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleAddDetail = () => {
     setTravelDetails([
@@ -29,20 +66,30 @@ function TravelForm({ onTabChange }) {
 
   const handleSubmit = async () => {
     const jwtToken = Cookie.get('access_token') // Replace with your actual JWT token
-    const headers = { Authorization: `Bearer ${jwtToken}` }
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${jwtToken}`,
+    }
+    const apiUrl = 'http://127.0.0.1:8000/internationaltravelhistory/'
 
     try {
-      const response = await axios.post(
-        'http://127.0.0.1:8000/internationaltravelhistory/',
-        travelDetails,
-        { headers },
-      )
-      console.log(response.data)
-      if (response.status === 201) {
-        onTabChange('one')
+      if (dataLength > 0) {
+        const response = await axios.put(apiUrl, travelDetails, {
+          headers: headers,
+        })
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('one')
+        }
       } else {
-        // Handle the error response here
-        console.error('Error:', response.data)
+        const response = await axios.post(apiUrl, travelDetails, {
+          headers: headers,
+        })
+
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('one')
+        }
       }
     } catch (error) {
       // Handle error here
@@ -103,10 +150,13 @@ function TravelForm({ onTabChange }) {
                 </label>
                 <input
                   type="date"
+                  name="fromDate"
                   id={`fromDate-${index}`}
                   className="form-control"
                   value={detail.fromDate}
                   onChange={(e) => handleDetailChange(index, 'fromDate', e.target.value)}
+                  max={getCurrentDate()}
+                  onFocus={(e) => e.target.blur()}
                 />
               </div>
               <div className="col-md-3">
@@ -115,10 +165,14 @@ function TravelForm({ onTabChange }) {
                 </label>
                 <input
                   type="date"
+                  name="toDate"
                   id={`toDate-${index}`}
                   className="form-control"
                   value={detail.toDate}
                   onChange={(e) => handleDetailChange(index, 'toDate', e.target.value)}
+                  min={detail.fromDate} // Set the minimum date to the Start Date
+                  max={getCurrentDate()}
+                  onFocus={(e) => e.target.blur()}
                 />
               </div>
               <div className="col-md-6 d-flex justify-content-end align-items-end">
@@ -149,5 +203,13 @@ function TravelForm({ onTabChange }) {
 }
 TravelForm.propTypes = {
   onTabChange: PropTypes.func.isRequired,
+}
+function getCurrentDate() {
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const day = String(currentDate.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 export default TravelForm

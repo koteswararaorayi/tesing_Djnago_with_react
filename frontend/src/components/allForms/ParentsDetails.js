@@ -1,13 +1,14 @@
 /* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 // import { useNavigate } from 'react-router-dom'
 
 function ParentsDetails({ onTabChange }) {
-  // const navigate = useNavigate()
+  const [dataLength, setDataLength] = useState(0)
   const [formData, setFormData] = useState({
+    id: '',
     fatherName: '',
     fatherDOB: '',
     fatherAddress: '',
@@ -21,25 +22,74 @@ function ParentsDetails({ onTabChange }) {
     motherDateOfDeath: '', // New field for Date of Death for mother
     fatherDateOfDeath: '',
   })
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/parentsdetails/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        data = data[0]
+        console.log(data)
+
+        const filteredData = {
+          id: data.id || '',
+          fatherName: data.father_name || '',
+          fatherDOB: data.father_dob || '',
+          fatherAddress: data.father_address || '',
+          fatherOccupation: data.father_occupation || '',
+          fatherIncome: data.father_annual_income || '',
+          motherName: data.mother_name || '',
+          motherDOB: data.mother_dob || '',
+          motherAddress: data.mother_address || '',
+          motherOccupation: data.mother_occupation || '',
+          motherIncome: data.mother_annual_income || '',
+          motherDateOfDeath: data.mother_dod || '', // New field for Date of Death for mother
+          fatherDateOfDeath: data.father_dod || '',
+        }
+
+        // Set the formData state with the filtered data.
+        setFormData(filteredData)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     const token = Cookie.get('access_token') // Get the JWT token from Cookie
-
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
     try {
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      }
+      if (dataLength > 0) {
+        const response = await axios.put(`http://127.0.0.1:8000/parentsdetails/`, formData, {
+          headers: headers,
+        })
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('seven')
+        }
+      } else {
+        const response = await axios.post('http://127.0.0.1:8000/parentsdetails/', formData, {
+          headers: headers,
+        })
 
-      // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://127.0.0.1:8000/parentsdetails/', formData, {
-        headers: headers,
-      })
-
-      console.log('Response:', response.data)
-      if (response.status === 201) {
-        onTabChange('seven')
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('seven')
+        }
       }
     } catch (error) {
       console.error('Error:', error)
@@ -76,6 +126,8 @@ function ParentsDetails({ onTabChange }) {
                 value={formData.fatherDOB}
                 onChange={handleChange}
                 className="form-control"
+                max={getCurrentDate()}
+                onFocus={(e) => e.target.blur()}
               />
             </div>
             <div className="mb-3">
@@ -132,6 +184,8 @@ function ParentsDetails({ onTabChange }) {
                 value={formData.motherDOB}
                 onChange={handleChange}
                 className="form-control"
+                max={getCurrentDate()}
+                onFocus={(e) => e.target.blur()}
               />
             </div>
             <div className="mb-3">
@@ -178,6 +232,9 @@ function ParentsDetails({ onTabChange }) {
                   value={formData.fatherDateOfDeath}
                   onChange={handleChange}
                   className="form-control"
+                  min={formData.fatherDOB} // Set the minimum date to the Start Date
+                  max={getCurrentDate()}
+                  onFocus={(e) => e.target.blur()}
                 />
               </div>
             </div>
@@ -190,6 +247,9 @@ function ParentsDetails({ onTabChange }) {
                   value={formData.motherDateOfDeath}
                   onChange={handleChange}
                   className="form-control"
+                  min={formData.motherDOB} // Set the minimum date to the Start Date
+                  max={getCurrentDate()}
+                  onFocus={(e) => e.target.blur()}
                 />
               </div>
             </div>
@@ -206,6 +266,14 @@ function ParentsDetails({ onTabChange }) {
 }
 ParentsDetails.propTypes = {
   onTabChange: PropTypes.func.isRequired,
+}
+function getCurrentDate() {
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const day = String(currentDate.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 
 export default ParentsDetails

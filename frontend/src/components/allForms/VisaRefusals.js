@@ -1,13 +1,50 @@
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 // import { useNavigate } from 'react-router-dom'
 import Cookie from 'js-cookie'
 
 function VisaRefusals({ onTabChange }) {
+  const [dataLength, setDataLength] = useState(0)
   const [visaDetails, setVisaDetails] = useState([
-    { country: '', reason: '', type: '', comments: '' },
+    { id: '', country: '', reason: '', type: '', comments: '' },
   ])
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/visarefusals/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        console.log(data)
+        if (data.length > 0) {
+          // Use map to extract the desired fields from each item.
+
+          const filteredData = data.map((item) => ({
+            id: item.id || '',
+            country: item.country || '',
+            reason: item.reason_for_rejection || '',
+            type: item.type_of_visa || '',
+            comments: item.additional_comments || '',
+          }))
+
+          // Set the formData state with the filtered data.
+          setVisaDetails(filteredData)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleAddDetail = () => {
     const newDetail = { country: '', reason: '', type: '', comments: '' }
@@ -32,18 +69,30 @@ function VisaRefusals({ onTabChange }) {
     event.preventDefault()
 
     const jwtToken = Cookie.get('access_token')
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${jwtToken}`,
+    }
     const apiUrl = 'http://127.0.0.1:8000/visarefusals/'
 
     try {
-      const response = await axios.post(apiUrl, visaDetails, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      })
-      console.log('Response:', response.data)
-      if (response.status === 201) {
-        onTabChange('ten')
+      if (dataLength > 0) {
+        const response = await axios.put(apiUrl, visaDetails, {
+          headers: headers,
+        })
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('ten')
+        }
+      } else {
+        const response = await axios.post(apiUrl, visaDetails, {
+          headers: headers,
+        })
+
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('ten')
+        }
       }
     } catch (error) {
       // Handle error

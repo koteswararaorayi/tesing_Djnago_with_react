@@ -1,13 +1,14 @@
 /* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 // import { useNavigate } from 'react-router-dom'
 
 function EmergencyContact({ onTabChange }) {
-  // const navigate = useNavigate()
+  const [dataLength, setDataLength] = useState(0)
   const [formData, setFormData] = useState({
+    id: '',
     firstName: '',
     lastName: '',
     address: '',
@@ -15,37 +16,86 @@ function EmergencyContact({ onTabChange }) {
     phoneNumber: '',
     relation: '',
   })
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/emergencycontact/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        data = data[0]
+        console.log(data)
+        const filteredData = {
+          id: data.id || '',
+          firstName: data.first_name || '',
+          lastName: data.last_name || '',
+          address: data.full_address || '',
+          email: data.email || '',
+          phoneNumber: data.phone_number || '',
+          relation: data.relation || '',
+        }
+
+        // Set the formData state with the filtered data.
+        setFormData(filteredData)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     const token = Cookie.get('access_token') // Get the JWT token from Cookie
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
 
     try {
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      }
+      if (dataLength > 0) {
+        const response = await axios.put(`http://127.0.0.1:8000/emergencycontact/`, formData, {
+          headers: headers,
+        })
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('six')
+        }
+      } else {
+        const response = await axios.post('http://127.0.0.1:8000/emergencycontact/', formData, {
+          headers: headers,
+        })
 
-      // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://127.0.0.1:8000/emergencycontact/', formData, {
-        headers: headers,
-      })
-
-      console.log('Response:', response.data)
-      if (response.status === 201) {
-        onTabChange('six')
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('six')
+        }
       }
-      // Handle success, e.g., navigate to another page
-      // history.push("/another-page");
     } catch (error) {
       console.error('Error:', error)
-      // Handle error messages or actions here.
     }
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData((prevData) => ({ ...prevData, [name]: value }))
+    if (name === 'phoneNumber') {
+      // Ensure the input value is numeric and has a maximum length of 10 characters
+      if (/^\d{0,10}$/.test(value)) {
+        setFormData((prevData) => ({ ...prevData, [name]: value }))
+      }
+    } else {
+      // For other inputs, update the value directly
+      setFormData((prevData) => ({ ...prevData, [name]: value }))
+    }
+    // setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
 
   return (

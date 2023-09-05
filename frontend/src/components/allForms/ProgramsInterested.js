@@ -1,16 +1,51 @@
 /* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 // import { useNavigate } from 'react-router-dom'
 
 function ProgramsInterested({ onTabChange }) {
-  // const navigate = useNavigate()
+  const [dataLength, setDataLength] = useState(0)
   const [programs, setPrograms] = useState([
-    { stream: '', duration: '', location: '', comments: '' },
+    { id: '', stream: '', duration: '', location: '', comments: '' },
   ])
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/programsinterested/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        console.log(data)
+        if (data.length > 0) {
+          // Use map to extract the desired fields from each item.
+
+          const filteredData = data.map((item) => ({
+            id: item.id || '',
+            stream: item.stream || '',
+            duration: item.duration || '',
+            location: item.location || '',
+            comments: item.additional_comments || '',
+          }))
+
+          // Set the formData state with the filtered data.
+          setPrograms(filteredData)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
   const handleAddProgram = () => {
     setPrograms([...programs, {}])
   }
@@ -33,22 +68,31 @@ function ProgramsInterested({ onTabChange }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const token = Cookie.get('access_token') // Get the JWT token from Cookie
-
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
     try {
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+      if (dataLength > 0) {
+        const response = await axios.put('http://127.0.0.1:8000/programsinterested/', programs, {
+          headers: headers,
+        })
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('nine')
+        }
+      } else {
+        const response = await axios.post('http://127.0.0.1:8000/programsinterested/', programs, {
+          headers: headers,
+        })
+
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('nine')
+        }
       }
 
       // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://127.0.0.1:8000/programsinterested/', programs, {
-        headers: headers,
-      })
-
-      console.log('Response:', response.data)
-      if (response.status === 201) {
-        onTabChange('nine')
-      }
     } catch (error) {
       console.error('Error:', error)
       // Handle error messages or actions here.
