@@ -10,7 +10,7 @@ class LanguageTestScore(APIView):
         print (request.data)
         person_id = request.data.get('person_id')
         exam_type = request.data.get('testType')
-        category = request.data.get('Category')
+        category = request.data.get('category')
         listening = request.data.get('listening')
         reading = request.data.get('reading')
         writing = request.data.get('writing')

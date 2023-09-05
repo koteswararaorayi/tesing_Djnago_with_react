@@ -1,14 +1,16 @@
 /* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 // import { useNavigate } from 'react-router-dom'
 
 function SiblingDetails({ onTabChange }) {
-  // const navigate = useNavigate()
+  const [dataLength, setDataLength] = useState(0)
   const [siblings, setSiblings] = useState([
     {
+      id: '',
+      relation: '',
       siblingName: '',
       siblingDOB: '',
       maritalStatus: '',
@@ -17,6 +19,44 @@ function SiblingDetails({ onTabChange }) {
       siblingIncome: '',
     },
   ])
+  const fetchData = async () => {
+    try {
+      const token = Cookie.get('access_token')
+      const response = await axios.get('http://127.0.0.1:8000/siblingsdetails/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.status === 200) {
+        var { data } = response.data
+        setDataLength(data.length)
+        console.log(data)
+        if (data.length > 0) {
+          // Use map to extract the desired fields from each item.
+          const filteredData = data.map((item) => ({
+            id: item.id || '',
+            relation: item.relation || '',
+            siblingName: item.sibling_name || '',
+            siblingDOB: item.sibling_dob || '',
+            maritalStatus: item.sibling_marital_status || '',
+            address: item.sibling_address || '',
+            siblingOccupation: item.sibling_occupation || '',
+            siblingIncome: item.sibling_annual_income || '',
+          }))
+
+          // Set the formData state with the filtered data.
+          setSiblings(filteredData)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const handleAddSibling = () => {
     setSiblings([...siblings, {}])
@@ -40,21 +80,28 @@ function SiblingDetails({ onTabChange }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const token = Cookie.get('access_token') // Get the JWT token from Cookie
-
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
     try {
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      }
+      if (dataLength > 0) {
+        const response = await axios.put('http://127.0.0.1:8000/siblingsdetails/', siblings, {
+          headers: headers,
+        })
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('eight')
+        }
+      } else {
+        const response = await axios.post('http://127.0.0.1:8000/siblingsdetails/', siblings, {
+          headers: headers,
+        })
 
-      // Perform Axios POST request to your API endpoint
-      const response = await axios.post('http://127.0.0.1:8000/siblingsdetails/', siblings, {
-        headers: headers,
-      })
-
-      console.log('Response:', response.data)
-      if (response.status === 201) {
-        onTabChange('eight')
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('eight')
+        }
       }
     } catch (error) {
       console.error('Error:', error)
@@ -99,6 +146,8 @@ function SiblingDetails({ onTabChange }) {
                   value={sibling.siblingDOB}
                   onChange={(e) => handleChange(e, index)}
                   className="form-control"
+                  max={getCurrentDate()}
+                  onFocus={(e) => e.target.blur()}
                 />
               </div>
               <div className="col-md-6">
@@ -178,6 +227,14 @@ function SiblingDetails({ onTabChange }) {
 }
 SiblingDetails.propTypes = {
   onTabChange: PropTypes.func.isRequired,
+}
+function getCurrentDate() {
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const day = String(currentDate.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 
 export default SiblingDetails
