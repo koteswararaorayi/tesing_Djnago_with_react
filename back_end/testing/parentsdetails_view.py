@@ -52,7 +52,7 @@ class FamilyInformation(APIView):
                 return JsonResponse({'data':family_information},status=status.HTTP_200_OK, safe=False)
                 
             except Exception as e:
-                return JsonResponse({'error': str(e)}, status=500)
+                return JsonResponse({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
         user_id = request.user.id

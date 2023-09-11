@@ -79,73 +79,65 @@ function EducationForm({ onTabChange }) {
         // Loop through the data and populate the educationData object
         data.forEach((item) => {
           educationData[item.education_level] = item
-          console.log(item)
         })
+        if (educationData['Post Graduation']) {
+          setPostGraduationData({
+            educationLevel: 'Post Graduation',
+            id: educationData['Post Graduation'].id,
+            institutionName: educationData['Post Graduation'].institution_name,
+            address: educationData['Post Graduation'].address,
+            courseName: educationData['Post Graduation'].course_name,
+            gradePercentage: educationData['Post Graduation'].grade_percentage,
+            hasBacklogs: educationData['Post Graduation'].backlogs,
+            numberOfBacklogs: educationData['Post Graduation'].number_of_backlogs,
+            durationStart: educationData['Post Graduation'].duration_start,
+            durationEnd: educationData['Post Graduation'].duration_end,
+          })
+        }
 
-        setPostGraduationData()
-        // {
-        //   educationLevel: 'Post Graduation',
-        //   id: educationData['Post Graduation'].id,
-        //   institutionName: educationData['Post Graduation'].institution_name,
-        //   address: educationData['Post Graduation'].address,
-        //   courseName: educationData['Post Graduation'].course_name,
-        //   gradePercentage: educationData['Post Graduation'].grade_percentage,
-        //   hasBacklogs: educationData['Post Graduation'].number_of_backlogs,
-        //   numberOfBacklogs: educationData['Post Graduation'].number_of_backlogs,
-        //   durationStart: educationData['Post Graduation'].duration_start,
-        //   durationEnd: educationData['Post Graduation'].duration_end,
-        // } || {
-        //   educationLevel: 'Post Graduation',
-        //   id: null,
-        //   institutionName: '',
-        //   address: '',
-        //   courseName: '',
-        //   gradePercentage: '',
-        //   hasBacklogs: false,
-        //   numberOfBacklogs: 0,
-        //   durationStart: '',
-        //   durationEnd: '',
-        // },
+        if (educationData['Graduation']) {
+          setGraduationData({
+            educationLevel: 'Graduation',
+            id: educationData['Graduation'].id || null,
+            institutionName: educationData['Graduation'].institution_name || '',
+            address: educationData['Graduation'].address || '',
+            courseName: educationData['Graduation'].course_name || '',
+            gradePercentage: educationData['Graduation'].grade_percentage || '',
+            hasBacklogs: educationData['Graduation'].backlogs || '',
+            numberOfBacklogs: educationData['Graduation'].number_of_backlogs || '',
+            durationStart: educationData['Graduation'].duration_start || '',
+            durationEnd: educationData['Graduation'].duration_end || '',
+          })
+        }
 
-        setGraduationData({
-          educationLevel: 'Graduation',
-          id: educationData['Graduation'].id || null,
-          institutionName: educationData['Graduation'].institution_name || '',
-          address: educationData['Graduation'].address || '',
-          courseName: educationData['Graduation'].course_name || '',
-          gradePercentage: educationData['Graduation'].grade_percentage || '',
-          hasBacklogs: educationData['Graduation'].number_of_backlogs || '',
-          numberOfBacklogs: educationData['Graduation'].number_of_backlogs || '',
-          durationStart: educationData['Graduation'].duration_start || '',
-          durationEnd: educationData['Graduation'].duration_end || '',
-        })
-
-        setInterOrDiplomaData({
-          educationLevel: 'Inter or Diploma',
-          id: educationData['Inter or Diploma'].id || '',
-          institutionName: educationData['Inter or Diploma'].institution_name || '',
-          address: educationData['Inter or Diploma'].address || '',
-          courseName: educationData['Inter or Diploma'].course_name || '',
-          gradePercentage: educationData['Inter or Diploma'].grade_percentage || '',
-          hasBacklogs: educationData['Inter or Diploma'].number_of_backlogs || '',
-          numberOfBacklogs: educationData['Inter or Diploma'].number_of_backlogs || '',
-          durationStart: educationData['Inter or Diploma'].duration_start || '',
-          durationEnd: educationData['Inter or Diploma'].duration_end || '',
-        })
-
-        setSscData({
-          educationLevel: 'SSC',
-          id: educationData['SSC'].id || '',
-          institutionName: educationData['SSC'].institution_name || '',
-          address: educationData['SSC'].address || '',
-          courseName: educationData['SSC'].course_name || '',
-          gradePercentage: educationData['SSC'].grade_percentage || '',
-          hasBacklogs: educationData['SSC'].number_of_backlogs || '',
-          numberOfBacklogs: educationData['SSC'].number_of_backlogs || '',
-          durationStart: educationData['SSC'].duration_start || '',
-          durationEnd: educationData['SSC'].duration_end || '',
-        })
-
+        if (educationData['Inter or Diploma']) {
+          setInterOrDiplomaData({
+            educationLevel: 'Inter or Diploma',
+            id: educationData['Inter or Diploma'].id || '',
+            institutionName: educationData['Inter or Diploma'].institution_name || '',
+            address: educationData['Inter or Diploma'].address || '',
+            courseName: educationData['Inter or Diploma'].course_name || '',
+            gradePercentage: educationData['Inter or Diploma'].grade_percentage || '',
+            hasBacklogs: educationData['Inter or Diploma'].backlogs || '',
+            numberOfBacklogs: educationData['Inter or Diploma'].number_of_backlogs || '',
+            durationStart: educationData['Inter or Diploma'].duration_start || '',
+            durationEnd: educationData['Inter or Diploma'].duration_end || '',
+          })
+        }
+        if (educationData['SSC']) {
+          setSscData({
+            educationLevel: 'SSC',
+            id: educationData['SSC'].id || '',
+            institutionName: educationData['SSC'].institution_name || '',
+            address: educationData['SSC'].address || '',
+            courseName: educationData['SSC'].course_name || '',
+            gradePercentage: educationData['SSC'].grade_percentage || '',
+            hasBacklogs: educationData['SSC'].backlogs || '',
+            numberOfBacklogs: educationData['SSC'].number_of_backlogs || '',
+            durationStart: educationData['SSC'].duration_start || '',
+            durationEnd: educationData['SSC'].duration_end || '',
+          })
+        }
         if (educationData['Post Graduation']) {
           handleEducationLevelChange({ target: { value: 'Post Graduation' } })
         } else if (educationData['Graduation']) {
@@ -154,6 +146,8 @@ function EducationForm({ onTabChange }) {
           handleEducationLevelChange({ target: { value: 'Inter or Diploma' } })
         } else if (educationData['SSC']) {
           handleEducationLevelChange({ target: { value: 'SSC' } })
+        } else {
+          handleEducationLevelChange({ target: { value: '' } })
         }
       }
     } catch (error) {
@@ -227,7 +221,7 @@ function EducationForm({ onTabChange }) {
         Authorization: `Bearer ${token}`,
       }
       if (dataLength > 0) {
-        const response = await axios.put('http://127.0.0.1:8000/educationaldetails', testDetails, {
+        const response = await axios.put('http://127.0.0.1:8000/educationaldetails/', testDetails, {
           headers: headers,
         })
         console.log('Response:', response.data)
@@ -402,7 +396,7 @@ function EducationForm({ onTabChange }) {
             {renderEducationLevelForm('SSC', 'SSC', sscData)}
           </>
         )
-      case 'GRADUATION':
+      case 'Graduation':
         return (
           <>
             {renderEducationLevelForm('Graduation', 'Graduation', graduationData)}
@@ -435,7 +429,7 @@ function EducationForm({ onTabChange }) {
             name="educationLevel"
             className="form-control mt-3 mb-3"
             value={formData.educationLevel}
-            onChange={(e) => handleEducationLevelChange(e.target.value)}
+            onChange={(e) => handleEducationLevelChange(e)}
           >
             <option value="">Select Education Level</option>
             <option value="Post Graduation">Post Graduation</option>
