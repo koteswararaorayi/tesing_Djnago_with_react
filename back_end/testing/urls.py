@@ -10,6 +10,7 @@ from . import canada_immigration_info_view
 from . import international_travel_history_view
 from . import personal_details_view
 from . import work_experience_view
+from . import educational_details_view
 
 app_name = "testing"
 
@@ -25,5 +26,6 @@ urlpatterns = [
     path('canadaimmigrationinfo/', canada_immigration_info_view.CanadaImmigrationInfo.as_view(), name="canada_immigration_info"),
     path('internationaltravelhistory/', international_travel_history_view.TravelHistory.as_view(), name="international_travel_history"),
     path('workexperience/', work_experience_view.WorkExperience.as_view(), name="work_experience"),
+    path('educationaldetails/', educational_details_view.EducationalDetails.as_view(), name="educational_details"),
 ]
 

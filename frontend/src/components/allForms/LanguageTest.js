@@ -1,11 +1,12 @@
 /* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 
 function TestForm({ onTabChange }) {
   const [formData, setFormData] = useState({
+    id: null,
     testType: '',
     category: '',
     listening: '',
@@ -17,28 +18,68 @@ function TestForm({ onTabChange }) {
     dateOfResult: '',
   })
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
+  const fetchData = async () => {
     try {
       const token = Cookie.get('access_token')
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      }
 
-      const response = await axios.post('http://127.0.0.1:8000/languagetest/', formData, {
-        headers: headers,
+      const response = await axios.get('http://127.0.0.1:8000/languagetest/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
 
-      console.log('Response:', response.data)
-      // Redirect to another page
-      // navigate('/success')
-      if (response.status === 201) {
-        onTabChange('three')
+      if (response.status === 200) {
+        const { data } = response.data // Access data correctly
+        console.log(data)
+        setFormData({
+          id: data.id || null,
+          testType: data.ExamType || '', // Use the correct keys
+          category: data.Category || '',
+          listening: data.Listening || '',
+          reading: data.Reading || '',
+          writing: data.Writing || '',
+          speaking: data.Speaking || '',
+          overallScore: data.OverAllScore || '',
+          dateOfTest: data.DateOfTest || '',
+          dateOfResult: data.DateOfResult || '',
+        })
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const token = Cookie.get('access_token')
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
+    const apiUrl = 'http://127.0.0.1:8000/languagetest/'
+
+    try {
+      if (formData.id) {
+        const response = await axios.put(apiUrl, formData, {
+          headers: headers,
+        })
+        console.log('Response:', response.data)
+        if (response.status === 200) {
+          onTabChange('three')
+        }
       } else {
-        // Handle the error response here
-        console.error('Error:', response.data)
+        const response = await axios.post(apiUrl, formData, {
+          headers: headers,
+        })
+
+        console.log('Response:', response.data)
+        if (response.status === 201) {
+          onTabChange('three')
+        }
       }
     } catch (error) {
       console.error('Error:', error)
@@ -161,6 +202,8 @@ function TestForm({ onTabChange }) {
               name="dateOfTest"
               value={formData.dateOfTest}
               onChange={handleChange}
+              max={getCurrentDate()}
+              onFocus={(e) => e.target.blur()}
               required
             />
           </div>
@@ -175,6 +218,9 @@ function TestForm({ onTabChange }) {
               name="dateOfResult"
               value={formData.dateOfResult}
               onChange={handleChange}
+              min={formData.dateOfTest} // Set the minimum date to the Start Date
+              max={getCurrentDate()}
+              onFocus={(e) => e.target.blur()}
               required
             />
           </div>
@@ -190,5 +236,12 @@ function TestForm({ onTabChange }) {
 TestForm.propTypes = {
   onTabChange: PropTypes.func.isRequired,
 }
+function getCurrentDate() {
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+  const day = String(currentDate.getDate()).padStart(2, '0')
 
+  return `${year}-${month}-${day}`
+}
 export default TestForm
